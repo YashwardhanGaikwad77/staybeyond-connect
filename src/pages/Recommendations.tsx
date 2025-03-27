@@ -1,36 +1,32 @@
 
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle, 
-  CardFooter 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
-import { 
-  Form, 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { MapPin, ThumbsUp, Clock, User } from "lucide-react";
-import { format } from "date-fns";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ThumbsUp, MapPin, Calendar } from "lucide-react";
 
 type Recommendation = {
   id: string;
-  user_id: string | null;
   title: string;
   description: string;
   category: string;
@@ -38,47 +34,24 @@ type Recommendation = {
   image_url: string | null;
   likes: number;
   created_at: string;
-  user_first_name?: string;
-  user_last_name?: string;
+  // Instead of relying on the user relation, store these fields separately
+  user_name: string | null;
 };
-
-const recommendationSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters"),
-  description: z.string().min(20, "Description must be at least 20 characters"),
-  category: z.string().min(3, "Category is required"),
-  location: z.string().min(3, "Location is required"),
-  image_url: z.string().url("Please enter a valid image URL").optional().or(z.literal(''))
-});
-
-const categoryOptions = [
-  "Food & Dining",
-  "Adventure & Activities",
-  "Cultural Experiences",
-  "Shopping",
-  "Nightlife",
-  "Family-friendly",
-  "Wellness & Relaxation",
-  "Tours & Excursions"
-];
 
 const Recommendations = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState("browse");
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
-  const form = useForm<z.infer<typeof recommendationSchema>>({
-    resolver: zodResolver(recommendationSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      category: "",
-      location: "",
-      image_url: ""
-    },
-  });
+  // Form state
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
+  const [location, setLocation] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [formSubmitting, setFormSubmitting] = useState(false);
   
   useEffect(() => {
     fetchRecommendations();
@@ -88,37 +61,53 @@ const Recommendations = () => {
     try {
       setLoading(true);
       
-      const query = supabase
+      const { data, error } = await supabase
         .from("recommendations")
         .select(`
-          *,
-          profiles:user_id (
-            first_name,
-            last_name
-          )
+          id,
+          title,
+          description,
+          category,
+          location,
+          image_url,
+          likes,
+          created_at,
+          user_id
         `)
         .order("created_at", { ascending: false });
       
-      if (selectedCategory) {
-        query.eq("category", selectedCategory);
-      }
-      
-      const { data, error } = await query;
-      
       if (error) throw error;
       
-      const recommendationsWithUserNames = data.map(rec => ({
-        ...rec,
-        user_first_name: rec.profiles?.first_name,
-        user_last_name: rec.profiles?.last_name
-      }));
+      // Process the data to include user name
+      const processedData = await Promise.all(
+        (data || []).map(async (rec) => {
+          let userName = "Anonymous";
+          
+          if (rec.user_id) {
+            const { data: userData, error: userError } = await supabase
+              .from("profiles")
+              .select("first_name, last_name")
+              .eq("id", rec.user_id)
+              .single();
+            
+            if (!userError && userData) {
+              userName = `${userData.first_name || ''} ${userData.last_name || ''}`.trim() || "Anonymous";
+            }
+          }
+          
+          return {
+            ...rec,
+            user_name: userName,
+          };
+        })
+      );
       
-      setRecommendations(recommendationsWithUserNames);
+      setRecommendations(processedData);
     } catch (error: any) {
       console.error("Error fetching recommendations:", error);
       toast({
-        title: "Error fetching recommendations",
-        description: error.message || "Could not load recommendations",
+        title: "Error",
+        description: error.message || "Failed to load recommendations",
         variant: "destructive",
       });
     } finally {
@@ -126,7 +115,9 @@ const Recommendations = () => {
     }
   };
   
-  const onSubmit = async (values: z.infer<typeof recommendationSchema>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     if (!user) {
       toast({
         title: "Authentication required",
@@ -136,310 +127,248 @@ const Recommendations = () => {
       return;
     }
     
-    try {
-      const { error } = await supabase
-        .from("recommendations")
-        .insert({
-          user_id: user.id,
-          title: values.title,
-          description: values.description,
-          category: values.category,
-          location: values.location,
-          image_url: values.image_url || null
-        });
-      
-      if (error) throw error;
-      
+    if (!title || !description || !category || !location) {
       toast({
-        title: "Recommendation added!",
-        description: "Your recommendation has been added successfully",
-      });
-      
-      form.reset();
-      setShowForm(false);
-      fetchRecommendations();
-    } catch (error: any) {
-      console.error("Error adding recommendation:", error);
-      toast({
-        title: "Error adding recommendation",
-        description: error.message || "Something went wrong",
-        variant: "destructive",
-      });
-    }
-  };
-  
-  const handleLike = async (id: string) => {
-    if (!user) {
-      toast({
-        title: "Authentication required",
-        description: "Please sign in to like recommendations",
+        title: "Error",
+        description: "Please fill out all required fields",
         variant: "destructive",
       });
       return;
     }
     
     try {
-      // Find the recommendation to update
-      const recommendation = recommendations.find(r => r.id === id);
-      if (!recommendation) return;
+      setFormSubmitting(true);
       
-      // Update in the database
-      const { error } = await supabase
-        .from("recommendations")
-        .update({ likes: recommendation.likes + 1 })
-        .eq("id", id);
+      const { error } = await supabase.from("recommendations").insert({
+        user_id: user.id,
+        title,
+        description,
+        category,
+        location,
+        image_url: imageUrl || null,
+      });
       
       if (error) throw error;
       
-      // Update locally
-      setRecommendations(recommendations.map(r => 
-        r.id === id ? { ...r, likes: r.likes + 1 } : r
-      ));
+      // Reset form
+      setTitle("");
+      setDescription("");
+      setCategory("");
+      setLocation("");
+      setImageUrl("");
+      
+      toast({
+        title: "Success",
+        description: "Your recommendation has been added",
+      });
+      
+      // Refresh recommendations
+      fetchRecommendations();
+      
+      // Switch to browse tab
+      setActiveTab("browse");
     } catch (error: any) {
-      console.error("Error liking recommendation:", error);
+      console.error("Error adding recommendation:", error);
       toast({
         title: "Error",
-        description: error.message || "Could not like this recommendation",
+        description: error.message || "Failed to add recommendation",
         variant: "destructive",
       });
+    } finally {
+      setFormSubmitting(false);
     }
+  };
+  
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
   
   return (
     <div className="min-h-screen pt-16 bg-stone-light">
       <div className="page-container py-12">
-        <div className="text-center mb-8">
-          <span className="text-sm uppercase tracking-widest text-gold font-medium">
-            Local Insights
-          </span>
-          <h1 className="text-3xl md:text-4xl font-serif mt-2">Community Recommendations</h1>
-          <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-            Discover the best activities, dining spots, and experiences recommended by our community of travelers and local experts.
-          </p>
-        </div>
-        
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-          <div className="flex flex-wrap gap-2 mb-4 md:mb-0">
-            <Button 
-              variant={selectedCategory === null ? "default" : "outline"}
-              className={selectedCategory === null ? "bg-gold hover:bg-gold-dark" : ""}
-              onClick={() => {
-                setSelectedCategory(null);
-                fetchRecommendations();
-              }}
-            >
-              All
-            </Button>
-            {categoryOptions.map(category => (
-              <Button 
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                className={selectedCategory === category ? "bg-gold hover:bg-gold-dark" : ""}
-                onClick={() => {
-                  setSelectedCategory(category);
-                  fetchRecommendations();
-                }}
-              >
-                {category}
-              </Button>
-            ))}
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-serif mb-2">Community Recommendations</h1>
+            <p className="text-muted-foreground">
+              Discover local attractions, activities, and hidden gems recommended by our community
+            </p>
           </div>
           
-          <Button 
-            onClick={() => setShowForm(!showForm)}
-            className="bg-gold hover:bg-gold-dark"
-          >
-            {showForm ? "Cancel" : "Add Recommendation"}
-          </Button>
-        </div>
-        
-        {showForm && (
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle>Add a Recommendation</CardTitle>
-              <CardDescription>
-                Share your favorite places and activities with the community
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Title</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Best Rooftop Restaurant" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="category"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Category</FormLabel>
-                          <FormControl>
-                            <select 
-                              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                              {...field}
-                            >
-                              <option value="">Select a category</option>
-                              {categoryOptions.map(category => (
-                                <option key={category} value={category}>
-                                  {category}
-                                </option>
-                              ))}
-                            </select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  
-                  <FormField
-                    control={form.control}
-                    name="location"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Location</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Udaipur, Rajasthan" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Share your experience and tips..."
-                            className="min-h-[100px]"
-                            {...field} 
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-8">
+              <TabsTrigger value="browse">Browse Recommendations</TabsTrigger>
+              <TabsTrigger value="add">Add Recommendation</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="browse">
+              {loading ? (
+                <div className="text-center py-12">
+                  <div className="h-1 w-24 bg-gradient-to-r from-gold-dark to-gold rounded animate-pulse mx-auto"></div>
+                  <p className="mt-4 text-muted-foreground">Loading recommendations...</p>
+                </div>
+              ) : recommendations.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {recommendations.map((rec) => (
+                    <Card key={rec.id} className="h-full">
+                      {rec.image_url && (
+                        <div className="w-full h-48 overflow-hidden">
+                          <img 
+                            src={rec.image_url} 
+                            alt={rec.title} 
+                            className="w-full h-full object-cover transition-transform hover:scale-105"
                           />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="image_url"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Image URL (Optional)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="https://example.com/image.jpg" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <div className="flex justify-end">
-                    <Button type="submit" className="bg-gold hover:bg-gold-dark">
-                      Submit Recommendation
-                    </Button>
-                  </div>
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
-        )}
-        
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <div className="h-1 w-24 bg-gradient-to-r from-gold-dark to-gold rounded animate-pulse mx-auto"></div>
-              <p className="mt-4 text-muted-foreground">Loading recommendations...</p>
-            </div>
-          </div>
-        ) : recommendations.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recommendations.map((rec) => (
-              <Card key={rec.id} className="overflow-hidden">
-                {rec.image_url && (
-                  <div className="h-48 overflow-hidden">
-                    <img 
-                      src={rec.image_url} 
-                      alt={rec.title} 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-                
+                        </div>
+                      )}
+                      
+                      <CardHeader>
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle>{rec.title}</CardTitle>
+                            <CardDescription className="flex items-center mt-1">
+                              <MapPin className="h-4 w-4 mr-1" /> {rec.location}
+                            </CardDescription>
+                          </div>
+                          <span className="bg-stone-lightest px-3 py-1 rounded-full text-xs font-medium">
+                            {rec.category}
+                          </span>
+                        </div>
+                      </CardHeader>
+                      
+                      <CardContent>
+                        <p className="text-sm text-muted-foreground">{rec.description}</p>
+                      </CardContent>
+                      
+                      <CardFooter className="flex justify-between items-center text-xs text-muted-foreground">
+                        <div className="flex items-center">
+                          <Calendar className="h-3 w-3 mr-1" />
+                          {formatDate(rec.created_at)}
+                          <span className="mx-2">•</span>
+                          By {rec.user_name}
+                        </div>
+                        
+                        <div className="flex items-center">
+                          <ThumbsUp className="h-3 w-3 mr-1" />
+                          {rec.likes}
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 bg-stone-lightest rounded-lg">
+                  <p className="text-muted-foreground mb-4">No recommendations yet.</p>
+                  <Button onClick={() => setActiveTab("add")} className="bg-gold hover:bg-gold-dark">
+                    Add the first recommendation
+                  </Button>
+                </div>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="add">
+              <Card>
                 <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <span className="inline-block px-2 py-1 text-xs font-medium bg-stone-lightest rounded">
-                      {rec.category}
-                    </span>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      className="text-muted-foreground hover:text-foreground"
-                      onClick={() => handleLike(rec.id)}
-                    >
-                      <ThumbsUp className="h-4 w-4 mr-1" /> {rec.likes}
-                    </Button>
-                  </div>
-                  <CardTitle className="mt-2">{rec.title}</CardTitle>
-                  <CardDescription className="flex items-center text-muted-foreground">
-                    <MapPin className="h-3.5 w-3.5 mr-1" /> {rec.location}
+                  <CardTitle>Share Your Recommendation</CardTitle>
+                  <CardDescription>
+                    Help fellow travelers discover amazing experiences in your favorite destinations
                   </CardDescription>
                 </CardHeader>
                 
                 <CardContent>
-                  <p className="text-sm text-foreground">{rec.description}</p>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <label htmlFor="title" className="text-sm font-medium">
+                        Title *
+                      </label>
+                      <Input
+                        id="title"
+                        placeholder="E.g., Amazing Sunset Spot"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        required
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label htmlFor="category" className="text-sm font-medium">
+                          Category *
+                        </label>
+                        <Select value={category} onValueChange={setCategory} required>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Food & Dining">Food & Dining</SelectItem>
+                            <SelectItem value="Attractions">Attractions</SelectItem>
+                            <SelectItem value="Activities">Activities</SelectItem>
+                            <SelectItem value="Shopping">Shopping</SelectItem>
+                            <SelectItem value="Nightlife">Nightlife</SelectItem>
+                            <SelectItem value="Nature">Nature</SelectItem>
+                            <SelectItem value="Culture">Culture</SelectItem>
+                            <SelectItem value="Hidden Gem">Hidden Gem</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <label htmlFor="location" className="text-sm font-medium">
+                          Location *
+                        </label>
+                        <Input
+                          id="location"
+                          placeholder="E.g., Jaipur, Rajasthan"
+                          value={location}
+                          onChange={(e) => setLocation(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label htmlFor="description" className="text-sm font-medium">
+                        Description *
+                      </label>
+                      <Textarea
+                        id="description"
+                        placeholder="Share details about what makes this place special..."
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        rows={4}
+                        required
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label htmlFor="image" className="text-sm font-medium">
+                        Image URL (optional)
+                      </label>
+                      <Input
+                        id="image"
+                        placeholder="https://example.com/image.jpg"
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                      />
+                    </div>
+                    
+                    <div className="pt-2">
+                      <Button 
+                        type="submit" 
+                        className="w-full bg-gold hover:bg-gold-dark"
+                        disabled={formSubmitting}
+                      >
+                        {formSubmitting ? "Submitting..." : "Submit Recommendation"}
+                      </Button>
+                    </div>
+                  </form>
                 </CardContent>
-                
-                <CardFooter className="flex justify-between text-xs text-muted-foreground border-t pt-4">
-                  <div className="flex items-center">
-                    <User className="h-3.5 w-3.5 mr-1" />
-                    {rec.user_first_name ? `${rec.user_first_name} ${rec.user_last_name?.charAt(0) || ''}` : 'Anonymous'}
-                  </div>
-                  <div className="flex items-center">
-                    <Clock className="h-3.5 w-3.5 mr-1" />
-                    {format(new Date(rec.created_at), 'MMM d, yyyy')}
-                  </div>
-                </CardFooter>
               </Card>
-            ))}
-          </div>
-        ) : (
-          <Card className="text-center py-12">
-            <CardContent>
-              <div className="flex flex-col items-center">
-                <div className="rounded-full bg-stone-lightest p-4 mb-4">
-                  <MapPin className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <h3 className="text-lg font-medium mb-2">No recommendations yet</h3>
-                <p className="text-muted-foreground max-w-md mx-auto mb-6">
-                  Be the first to share your favorite activities and places with our community!
-                </p>
-                <Button 
-                  onClick={() => setShowForm(true)}
-                  className="bg-gold hover:bg-gold-dark"
-                >
-                  Add Recommendation
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
