@@ -18,6 +18,7 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Bookings from "./pages/Bookings";
 
+// Create a new QueryClient instance outside of the component
 const queryClient = new QueryClient();
 
 // Protected route component
@@ -78,19 +79,20 @@ const AppRoutes = () => {
   );
 };
 
+// Restructured the App component to avoid React 18 strict mode issues with QueryClientProvider
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <AuthProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <AuthProvider>
+            <Toaster />
+            <Sonner />
             <AppRoutes />
-          </BrowserRouter>
-        </AuthProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
+          </AuthProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
   );
 };
 
