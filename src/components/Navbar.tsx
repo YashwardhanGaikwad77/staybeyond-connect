@@ -1,12 +1,14 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Home, MapPin } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,6 +35,7 @@ const Navbar = () => {
     { name: "Home", path: "/" },
     { name: "Accommodations", path: "/listings" },
     { name: "Transport", path: "/transport" },
+    { name: "Recommendations", path: "/recommendations" },
     { name: "About", path: "/about" },
   ];
 
@@ -63,7 +66,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-6">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -81,12 +84,52 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            <Link
-              to="/listings"
-              className="px-4 py-2 bg-gold hover:bg-gold-dark text-white rounded-md transition-all text-sm font-medium"
-            >
-              Book Now
-            </Link>
+
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <Link
+                  to="/bookings"
+                  className={`font-medium text-sm tracking-wide transition-all ${
+                    isScrolled
+                      ? isActive("/bookings")
+                        ? "text-gold"
+                        : "text-foreground hover:text-gold"
+                      : isActive("/bookings")
+                      ? "text-gold"
+                      : "text-white hover:text-gold"
+                  }`}
+                >
+                  My Bookings
+                </Link>
+                <Link
+                  to="/my-listings"
+                  className={`font-medium text-sm tracking-wide transition-all ${
+                    isScrolled
+                      ? isActive("/my-listings")
+                        ? "text-gold"
+                        : "text-foreground hover:text-gold"
+                      : isActive("/my-listings")
+                      ? "text-gold"
+                      : "text-white hover:text-gold"
+                  }`}
+                >
+                  My Listings
+                </Link>
+                <Link
+                  to="/become-host"
+                  className="px-4 py-2 bg-gold hover:bg-gold-dark text-white rounded-md transition-all text-sm font-medium"
+                >
+                  Become a Host
+                </Link>
+              </div>
+            ) : (
+              <Link
+                to="/listings"
+                className="px-4 py-2 bg-gold hover:bg-gold-dark text-white rounded-md transition-all text-sm font-medium"
+              >
+                Book Now
+              </Link>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -129,13 +172,48 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
-              <Link
-                to="/listings"
-                className="px-4 py-2 bg-gold hover:bg-gold-dark text-white rounded-md transition-all text-sm font-medium text-center"
-                onClick={closeMenu}
-              >
-                Book Now
-              </Link>
+              
+              {user ? (
+                <>
+                  <Link
+                    to="/bookings"
+                    className={`font-medium text-sm py-2 ${
+                      isActive("/bookings")
+                        ? "text-gold"
+                        : "text-foreground hover:text-gold"
+                    }`}
+                    onClick={closeMenu}
+                  >
+                    My Bookings
+                  </Link>
+                  <Link
+                    to="/my-listings"
+                    className={`font-medium text-sm py-2 ${
+                      isActive("/my-listings")
+                        ? "text-gold"
+                        : "text-foreground hover:text-gold"
+                    }`}
+                    onClick={closeMenu}
+                  >
+                    My Listings
+                  </Link>
+                  <Link
+                    to="/become-host"
+                    className="px-4 py-2 bg-gold hover:bg-gold-dark text-white rounded-md transition-all text-sm font-medium text-center"
+                    onClick={closeMenu}
+                  >
+                    Become a Host
+                  </Link>
+                </>
+              ) : (
+                <Link
+                  to="/listings"
+                  className="px-4 py-2 bg-gold hover:bg-gold-dark text-white rounded-md transition-all text-sm font-medium text-center"
+                  onClick={closeMenu}
+                >
+                  Book Now
+                </Link>
+              )}
             </div>
           </div>
         </div>

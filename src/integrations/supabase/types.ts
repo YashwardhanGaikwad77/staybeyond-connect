@@ -54,6 +54,57 @@ export type Database = {
         }
         Relationships: []
       }
+      listings: {
+        Row: {
+          amenities: string[] | null
+          bathrooms: number
+          bedrooms: number
+          created_at: string
+          currency: string
+          description: string
+          id: string
+          image_url: string
+          location: string
+          max_guests: number
+          price: number
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amenities?: string[] | null
+          bathrooms: number
+          bedrooms: number
+          created_at?: string
+          currency?: string
+          description: string
+          id?: string
+          image_url: string
+          location: string
+          max_guests: number
+          price: number
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amenities?: string[] | null
+          bathrooms?: number
+          bedrooms?: number
+          created_at?: string
+          currency?: string
+          description?: string
+          id?: string
+          image_url?: string
+          location?: string
+          max_guests?: number
+          price?: number
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -78,6 +129,42 @@ export type Database = {
           id?: string
           last_name?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      recommendations: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          image_url: string | null
+          likes: number | null
+          location: string
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          image_url?: string | null
+          likes?: number | null
+          location: string
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          likes?: number | null
+          location?: string
+          title?: string
+          user_id?: string | null
         }
         Relationships: []
       }
