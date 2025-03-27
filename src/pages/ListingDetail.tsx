@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -43,7 +42,6 @@ const ListingDetail = () => {
         transport.filter(t => t.availableLocations.includes(stay.city)).slice(0, 2)
       );
       
-      // Simulate loading images
       setTimeout(() => {
         setIsLoading(false);
       }, 800);
@@ -326,6 +324,10 @@ const ListingDetail = () => {
                   currency={stay.currency} 
                   maxGuests={stay.maxGuests} 
                   bedrooms={stay.bedrooms}
+                  stayId={stay.id}
+                  stayName={stay.name}
+                  stayLocation={`${stay.location}, ${stay.city}, ${stay.state}`}
+                  stayImage={stay.images[0]}
                 />
               </div>
             </div>
@@ -379,6 +381,10 @@ const ListingDetail = () => {
                 currency={stay.currency} 
                 maxGuests={stay.maxGuests} 
                 bedrooms={stay.bedrooms}
+                stayId={stay.id}
+                stayName={stay.name}
+                stayLocation={`${stay.location}, ${stay.city}, ${stay.state}`}
+                stayImage={stay.images[0]}
               />
             </div>
           </div>

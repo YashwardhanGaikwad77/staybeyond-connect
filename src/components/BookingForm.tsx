@@ -10,6 +10,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { format } from "date-fns";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 interface BookingFormProps {
   price: number;
@@ -17,6 +20,10 @@ interface BookingFormProps {
   maxGuests: number;
   bedrooms: number;
   onClose?: () => void;
+  stayId: string;
+  stayName: string;
+  stayLocation: string;
+  stayImage: string;
 }
 
 const BookingForm = ({
@@ -25,8 +32,14 @@ const BookingForm = ({
   maxGuests,
   bedrooms,
   onClose,
+  stayId,
+  stayName,
+  stayLocation,
+  stayImage,
 }: BookingFormProps) => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [guests, setGuests] = useState(1);
@@ -70,6 +83,16 @@ const BookingForm = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!user) {
+      toast({
+        title: "Please log in to book",
+        description: "You need to be logged in to make a booking",
+        variant: "destructive",
+      });
+      navigate("/auth");
+      return;
+    }
+    
     if (!startDate || !endDate) {
       toast({
         title: "Please select check-in and check-out dates",
@@ -80,23 +103,50 @@ const BookingForm = ({
 
     setIsLoading(true);
     
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    setIsLoading(false);
-    
-    toast({
-      title: "Booking confirmed!",
-      description: `Your stay has been booked for ${nights} nights from ${format(startDate, "MMM dd, yyyy")} to ${format(endDate, "MMM dd, yyyy")}`,
-    });
-    
-    // Reset form
-    setStartDate(undefined);
-    setEndDate(undefined);
-    setGuests(1);
-    
-    if (onClose) {
-      onClose();
+    try {
+      // Save booking to database
+      const { error } = await supabase.from('bookings').insert({
+        user_id: user.id,
+        stay_id: stayId,
+        stay_name: stayName,
+        stay_location: stayLocation,
+        stay_image: stayImage,
+        checkin_date: startDate.toISOString(),
+        checkout_date: endDate.toISOString(),
+        guests: guests,
+        total_price: total,
+        currency: currency
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast({
+        title: "Booking confirmed!",
+        description: `Your stay has been booked for ${nights} nights from ${format(startDate, "MMM dd, yyyy")} to ${format(endDate, "MMM dd, yyyy")}`,
+      });
+      
+      // Reset form
+      setStartDate(undefined);
+      setEndDate(undefined);
+      setGuests(1);
+      
+      // Redirect to bookings page
+      navigate("/bookings");
+      
+    } catch (error) {
+      console.error('Error saving booking:', error);
+      toast({
+        title: "Booking failed",
+        description: "There was an error saving your booking. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+      if (onClose) {
+        onClose();
+      }
     }
   };
 

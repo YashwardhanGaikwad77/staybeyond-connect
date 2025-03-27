@@ -19,6 +19,7 @@ type Booking = {
   stay_name: string;
   stay_location: string;
   stay_image: string;
+  currency: string;
 };
 
 const Bookings = () => {
@@ -34,14 +35,18 @@ const Bookings = () => {
         
         if (!user) return;
         
-        // This is a placeholder since we haven't created the bookings table yet
-        // In a real app, you would fetch from the bookings table
-        setBookings([]);
+        const { data, error } = await supabase
+          .from('bookings')
+          .select('*')
+          .order('created_at', { ascending: false });
         
-        toast({
-          title: "Bookings feature coming soon",
-          description: "This feature will be available in a future update.",
-        });
+        if (error) {
+          throw error;
+        }
+        
+        if (data) {
+          setBookings(data as Booking[]);
+        }
       } catch (error) {
         console.error('Error loading bookings', error);
         toast({
@@ -108,7 +113,10 @@ const Bookings = () => {
                     </div>
                     <div className="flex justify-between pt-2 border-t">
                       <span className="font-medium">Total</span>
-                      <span className="font-medium">₹{booking.total_price.toLocaleString()}</span>
+                      <span className="font-medium">
+                        {booking.currency === "INR" ? "₹" : "$"}
+                        {booking.total_price.toLocaleString()}
+                      </span>
                     </div>
                   </div>
                   
