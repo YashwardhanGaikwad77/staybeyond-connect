@@ -1,4 +1,5 @@
-import { useLocation } from "react-router-dom";
+
+import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
 
 const NotFound = () => {
@@ -12,13 +13,29 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home
-        </a>
+    <div className="min-h-screen flex items-center justify-center bg-stone-light pt-16">
+      <div className="page-container text-center py-16">
+        <div className="max-w-lg mx-auto">
+          <div className="text-gold text-8xl font-serif mb-4 animate-float">404</div>
+          <h1 className="text-3xl font-serif mb-6">Page Not Found</h1>
+          <p className="text-muted-foreground mb-8">
+            We can't seem to find the page you're looking for. The page may have been moved, deleted, or never existed.
+          </p>
+          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center">
+            <Link
+              to="/"
+              className="px-8 py-3 bg-gold hover:bg-gold-dark text-white rounded-md transition-all text-sm font-medium"
+            >
+              Return to Home
+            </Link>
+            <Link
+              to="/listings"
+              className="px-8 py-3 bg-white hover:bg-stone-light text-foreground border border-border rounded-md transition-all text-sm font-medium"
+            >
+              Browse Accommodations
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
