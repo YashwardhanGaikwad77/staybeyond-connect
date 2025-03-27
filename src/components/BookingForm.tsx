@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import RazorpayCheckout from "./RazorpayCheckout";
 
 interface BookingFormProps {
   price: number;
@@ -45,6 +46,8 @@ const BookingForm = ({
   const [guests, setGuests] = useState(1);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"default" | "razorpay">("default");
+  const [bookingCreated, setBookingCreated] = useState(false);
 
   const calculateNights = () => {
     if (startDate && endDate) {
@@ -80,27 +83,9 @@ const BookingForm = ({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const saveBooking = async (paymentId?: string) => {
+    if (!user || !startDate || !endDate) return;
     
-    if (!user) {
-      toast({
-        title: "Please log in to book",
-        description: "You need to be logged in to make a booking",
-        variant: "destructive",
-      });
-      navigate("/auth");
-      return;
-    }
-    
-    if (!startDate || !endDate) {
-      toast({
-        title: "Please select check-in and check-out dates",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsLoading(true);
     
     try {
@@ -115,7 +100,9 @@ const BookingForm = ({
         checkout_date: endDate.toISOString(),
         guests: guests,
         total_price: total,
-        currency: currency
+        currency: currency,
+        payment_id: paymentId || null,
+        payment_method: paymentId ? 'razorpay' : 'default'
       });
       
       if (error) {
@@ -148,6 +135,53 @@ const BookingForm = ({
         onClose();
       }
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!user) {
+      toast({
+        title: "Please log in to book",
+        description: "You need to be logged in to make a booking",
+        variant: "destructive",
+      });
+      navigate("/auth");
+      return;
+    }
+    
+    if (!startDate || !endDate) {
+      toast({
+        title: "Please select check-in and check-out dates",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (paymentMethod === "default") {
+      await saveBooking();
+    } else {
+      // For Razorpay, the payment will be initiated via the RazorpayCheckout component
+      setBookingCreated(true);
+    }
+  };
+
+  const handlePaymentSuccess = async (paymentId: string) => {
+    toast({
+      title: "Payment successful!",
+      description: `Payment ID: ${paymentId}`,
+    });
+    await saveBooking(paymentId);
+  };
+
+  const handlePaymentError = (error: any) => {
+    console.error("Payment error:", error);
+    toast({
+      title: "Payment failed",
+      description: "There was an error processing your payment. Please try again.",
+      variant: "destructive",
+    });
+    setBookingCreated(false);
   };
 
   return (
@@ -224,13 +258,53 @@ const BookingForm = ({
           </div>
         </div>
 
-        <Button 
-          type="submit" 
-          className="w-full bg-gold hover:bg-gold-dark text-white" 
-          disabled={!startDate || !endDate || isLoading}
-        >
-          {isLoading ? "Processing..." : nights > 0 ? "Reserve" : "Check availability"}
-        </Button>
+        {nights > 0 && (
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <label htmlFor="payment-method" className="text-sm font-medium">
+                Payment Method
+              </label>
+              <select
+                id="payment-method"
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value as "default" | "razorpay")}
+                className="rounded-md border-border bg-transparent p-1 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+              >
+                <option value="default">Pay Later</option>
+                <option value="razorpay">Razorpay</option>
+              </select>
+            </div>
+          </div>
+        )}
+
+        {!bookingCreated && (
+          <Button 
+            type="submit" 
+            className="w-full bg-gold hover:bg-gold-dark text-white" 
+            disabled={!startDate || !endDate || isLoading}
+          >
+            {isLoading ? "Processing..." : paymentMethod === "razorpay" ? "Proceed to Payment" : nights > 0 ? "Reserve" : "Check availability"}
+          </Button>
+        )}
+
+        {bookingCreated && paymentMethod === "razorpay" && (
+          <RazorpayCheckout 
+            amount={total} 
+            currency={currency} 
+            bookingData={{
+              stayName,
+              stayId,
+              stayLocation,
+              stayImage,
+              startDate: startDate!,
+              endDate: endDate!,
+              guests,
+              nights
+            }}
+            onSuccess={handlePaymentSuccess}
+            onError={handlePaymentError}
+          />
+        )}
 
         {nights > 0 && (
           <div className="mt-4 space-y-3 text-sm">
