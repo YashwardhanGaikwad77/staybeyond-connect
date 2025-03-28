@@ -214,7 +214,7 @@ const stays: Stay[] = [
     price: 32000,
     currency: "INR",
     images: [
-      "https://images.unsplash.com/photo-1605538032404-d5e869096a7b?auto=format&fit=crop&w=800",
+      "https://bluejellycruises.com/wp-content/uploads/2024/04/gall-2-1.webp",
       "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=800",
       "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=800"
     ],
@@ -253,8 +253,8 @@ const stays: Stay[] = [
     price: 38000,
     currency: "INR",
     images: [
-      "https://images.unsplash.com/photo-1561273575-42d3c5b3d4df?auto=format&fit=crop&w=800",
-      "https://images.unsplash.com/photo-1669024024763-e30138267b6e?auto=format&fit=crop&w=800",
+      "https://images.travelandleisureasia.com/wp-content/uploads/sites/2/2021/03/05121931/5r4t-29.jpg?tr=w-1200,q-60",
+      "https://assets.cntraveller.in/photos/65eaa2d906dc200af0febc85/3:2/w_1920,h_1280,c_limit/TUTC%20Ranthambore%20Sawai%20Shivir%20Presidential%20Suite%20Tent.jpg",
       "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=800"
     ],
     maxGuests: 2,
@@ -292,9 +292,9 @@ const stays: Stay[] = [
     price: 29000,
     currency: "INR",
     images: [
-      "https://images.unsplash.com/photo-1598082897099-fd39f6e2a5a2?auto=format&fit=crop&w=800",
+      "https://imgstaticcontent.lbb.in/lbbnew/wp-content/uploads/sites/1/2015/09/140716_GlenburnTeaEstate.jpg",
       "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800",
-      "https://images.unsplash.com/photo-1614267861476-0d129972190b?auto=format&fit=crop&w=800"
+      "https://q-xx.bstatic.com/xdata/images/hotel/max500/331777978.jpg?k=5d8530ff89b1c405c4eeef3660a131c51705f04657cc866b67f79a2f44030083&o="
     ],
     maxGuests: 8,
     bedrooms: 4,
