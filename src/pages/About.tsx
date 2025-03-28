@@ -14,7 +14,7 @@ const About = () => {
       <div className="relative bg-stone-dark text-white py-16 md:py-24">
         <div className="absolute inset-0 opacity-30">
           <img 
-            src="https://images.squarespace-cdn.com/content/v1/52e72f94e4b001f05e5e6d22/1697074562431-CV14C5LGBBTMJ6HHU2X2/Miavana-Piazza-32-Pool.jpg" 
+            src="https://images.unsplash.com/photo-1483213097414-365e22ee107b?auto=format&fit=crop&w=1920" 
             alt="About StayBeyond" 
             className="w-full h-full object-cover"
           />
@@ -58,6 +58,13 @@ const About = () => {
                 <img 
                   src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800" 
                   alt="Luxury accommodation" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="absolute -bottom-6 -left-6 w-48 h-48 rounded-lg overflow-hidden border-4 border-white shadow-lg">
+                <img 
+                  src="https://images.unsplash.com/photo-1553773077-91173e3d6b22?auto=format&fit=crop&w=800" 
+                  alt="Luxury train" 
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -149,25 +156,25 @@ const About = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                name: "Aashray Shukla",
+                name: "Aryan Patel",
                 title: "Founder & CEO",
                 bio: "With over 15 years in luxury hospitality, Aryan founded StayBeyond to showcase India's extraordinary accommodations to discerning travelers.",
-                image: "https://media.licdn.com/dms/image/v2/D4D03AQETgVaW1YpLgg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1719151399005?e=1748476800&v=beta&t=DI2tUBrft1VPecOsfhSyIlcLFbc2MOfWNxK6zXR8mEU"
+                image: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=400"
               },
               {
-                name: "Siddhant Sakharkar",
+                name: "Priya Sharma",
                 title: "Head of Curation",
                 bio: "Priya personally visits and vets every property in our collection, bringing her background in interior design and hospitality management.",
-                image: "https://images.unsplash.com/photo-1558898479-33c0057a5d12?auto=format&fit=crop&w=400"
+                image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400"
               },
               {
-                name: "Enayat Khan",
+                name: "Rahul Mehta",
                 title: "Transport Specialist",
                 bio: "A former luxury tour operator, Rahul oversees our transport offerings and partnerships with premium providers across India.",
-                image: "https://media.licdn.com/dms/image/v2/D4E03AQFJgLojosxvsA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1723130965819?e=1748476800&v=beta&t=-cgoxAXuCeYQf8J_sMFI6paSo-18iVAit4ZzCi5sYlI"
+                image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400"
               },
               {
-                name: "Yashwardhan Gaikwad",
+                name: "Maya Iyer",
                 title: "Guest Experience Director",
                 bio: "Maya ensures every StayBeyond guest receives personalized service and seamless travel experiences from booking to return.",
                 image: "https://images.unsplash.com/photo-1558898479-33c0057a5d12?auto=format&fit=crop&w=400"
