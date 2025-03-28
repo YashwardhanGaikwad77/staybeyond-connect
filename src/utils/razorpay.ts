@@ -34,6 +34,12 @@ export interface RazorpayResponse {
   razorpay_signature: string;
 }
 
+// Razorpay API Keys
+export const RAZORPAY_KEY_ID = "rzp_test_DfF1r6xv4VVddb";
+// Note: Key secret should only be used on the server side, not in client-side code
+// This is just stored here for reference
+export const RAZORPAY_KEY_SECRET = "spjQ63WjzRky2UKM24KdqtD5";
+
 // Load Razorpay script
 export const loadRazorpayScript = (): Promise<boolean> => {
   return new Promise((resolve) => {

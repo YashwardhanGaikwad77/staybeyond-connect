@@ -26,8 +26,8 @@ const RazorpayCheckout = ({ amount, currency, bookingData, onSuccess, onError }:
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const { toast } = useToast();
 
-  // Test Razorpay Key - Replace with your actual key in production
-  const razorpayKey = "rzp_test_xvlZZHOwS3gzcY";
+  // Using your Razorpay Key
+  const razorpayKey = "rzp_test_DfF1r6xv4VVddb";
 
   useEffect(() => {
     const loadScript = async () => {
