@@ -60,7 +60,7 @@ const Index = () => {
       <section className="relative py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0">
           <img 
-            src="https://images.unsplash.com/photo-1602343168117-bb8a12d7ee1b?auto=format&fit=crop&w=1920" 
+            src="https://images.unsplash.com/photo-1521109464564-2fa2faa95858?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjN8fGx1eHVyeSUyMHRyYXZlbHxlbnwwfHwwfHx8MA%3D%3D" 
             alt="Luxury experience" 
             className="w-full h-full object-cover"
           />
