@@ -85,10 +85,11 @@ const BookingFormContainer = ({
         stay_id: stayId,
         checkin_date: startDate.toISOString(),
         checkout_date: endDate.toISOString(),
-        payment_method: paymentId ? 'razorpay' : 'default'
+        payment_method: paymentId ? 'razorpay' : 'default',
+        payment_id: paymentId || null
       });
       
-      const { data, error } = await supabase.from('bookings').insert({
+      const bookingData = {
         user_id: user.id,
         stay_id: stayId,
         stay_name: stayName,
@@ -102,11 +103,13 @@ const BookingFormContainer = ({
         payment_id: paymentId || null,
         payment_method: paymentId ? 'razorpay' : 'default',
         payment_status: paymentId ? 'completed' : 'pending'
-      }).select();
+      };
+      
+      const { data, error } = await supabase.from('bookings').insert(bookingData).select();
       
       if (error) {
         console.error("Database error:", error);
-        throw error;
+        throw new Error(error.message || "There was an error saving your booking");
       }
       
       console.log("Booking created successfully:", data);
@@ -125,10 +128,17 @@ const BookingFormContainer = ({
       
     } catch (error: any) {
       console.error('Error saving booking:', error);
-      setPaymentError("There was an error saving your booking. Please try again.");
+      let errorMessage = "There was an error saving your booking. Please try again.";
+      
+      // Handle specific error cases
+      if (error.message && error.message.includes("payment_id")) {
+        errorMessage = "The booking system is experiencing technical issues. Please try again later or contact support.";
+      }
+      
+      setPaymentError(errorMessage);
       toast({
         title: "Booking failed",
-        description: error.message || "There was an error saving your booking. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
