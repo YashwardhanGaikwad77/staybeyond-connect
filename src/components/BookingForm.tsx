@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import RazorpayCheckout from "./RazorpayCheckout";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface BookingFormProps {
   price: number;
@@ -48,6 +48,7 @@ const BookingForm = ({
   const [isLoading, setIsLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"default" | "razorpay">("default");
   const [bookingCreated, setBookingCreated] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   const calculateNights = () => {
     if (startDate && endDate) {
@@ -87,9 +88,9 @@ const BookingForm = ({
     if (!user || !startDate || !endDate) return;
     
     setIsLoading(true);
+    setPaymentError(null);
     
     try {
-      // Save booking to database
       const { error } = await supabase.from('bookings').insert({
         user_id: user.id,
         stay_id: stayId,
@@ -102,7 +103,8 @@ const BookingForm = ({
         total_price: total,
         currency: currency,
         payment_id: paymentId || null,
-        payment_method: paymentId ? 'razorpay' : 'default'
+        payment_method: paymentId ? 'razorpay' : 'default',
+        payment_status: paymentId ? 'completed' : 'pending'
       });
       
       if (error) {
@@ -114,16 +116,16 @@ const BookingForm = ({
         description: `Your stay has been booked for ${nights} nights from ${format(startDate, "MMM dd, yyyy")} to ${format(endDate, "MMM dd, yyyy")}`,
       });
       
-      // Reset form
       setStartDate(undefined);
       setEndDate(undefined);
       setGuests(1);
+      setBookingCreated(false);
       
-      // Redirect to bookings page
       navigate("/bookings");
       
     } catch (error) {
       console.error('Error saving booking:', error);
+      setPaymentError("There was an error saving your booking. Please try again.");
       toast({
         title: "Booking failed",
         description: "There was an error saving your booking. Please try again.",
@@ -158,15 +160,17 @@ const BookingForm = ({
       return;
     }
 
+    setPaymentError(null);
+
     if (paymentMethod === "default") {
       await saveBooking();
     } else {
-      // For Razorpay, the payment will be initiated via the RazorpayCheckout component
       setBookingCreated(true);
     }
   };
 
   const handlePaymentSuccess = async (paymentId: string) => {
+    console.log("Payment successful, ID:", paymentId);
     toast({
       title: "Payment successful!",
       description: `Payment ID: ${paymentId}`,
@@ -176,6 +180,7 @@ const BookingForm = ({
 
   const handlePaymentError = (error: any) => {
     console.error("Payment error:", error);
+    setPaymentError("Payment failed. Please try again or choose a different payment method.");
     toast({
       title: "Payment failed",
       description: "There was an error processing your payment. Please try again.",
@@ -190,6 +195,12 @@ const BookingForm = ({
         {currency === "INR" ? "₹" : "$"}
         {price.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">night</span>
       </h3>
+
+      {paymentError && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{paymentError}</AlertDescription>
+        </Alert>
+      )}
 
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
