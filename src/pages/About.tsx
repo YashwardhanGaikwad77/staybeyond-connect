@@ -156,28 +156,28 @@ const About = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                name: "Aryan Patel",
-                title: "Founder & CEO",
-                bio: "With over 15 years in luxury hospitality, Aryan founded StayBeyond to showcase India's extraordinary accommodations to discerning travelers.",
-                image: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=400"
+                name: "Aashray Shukla",
+                //title: "Founder & CEO",
+                //bio: "With over 15 years in luxury hospitality, Aryan founded StayBeyond to showcase India's extraordinary accommodations to discerning travelers.",
+                //image: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=400"
               },
               {
-                name: "Priya Sharma",
-                title: "Head of Curation",
-                bio: "Priya personally visits and vets every property in our collection, bringing her background in interior design and hospitality management.",
-                image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400"
+                name: "Siddhant Sakharkar",
+                //title: "Head of Curation",
+                //bio: "Priya personally visits and vets every property in our collection, bringing her background in interior design and hospitality management.",
+                //image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400"
               },
               {
-                name: "Rahul Mehta",
-                title: "Transport Specialist",
-                bio: "A former luxury tour operator, Rahul oversees our transport offerings and partnerships with premium providers across India.",
-                image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400"
+                name: "Enayat Khan",
+                //title: "Transport Specialist",
+                //bio: "A former luxury tour operator, Rahul oversees our transport offerings and partnerships with premium providers across India.",
+                //image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400"
               },
               {
-                name: "Maya Iyer",
-                title: "Guest Experience Director",
-                bio: "Maya ensures every StayBeyond guest receives personalized service and seamless travel experiences from booking to return.",
-                image: "https://images.unsplash.com/photo-1558898479-33c0057a5d12?auto=format&fit=crop&w=400"
+                name: "Yashwardhan Gaikwad",
+                //title: "Guest Experience Director",
+                //bio: "Maya ensures every StayBeyond guest receives personalized service and seamless travel experiences from booking to return.",
+                //image: "https://images.unsplash.com/photo-1558898479-33c0057a5d12?auto=format&fit=crop&w=400"
               }
             ].map((member, i) => (
               <div 
