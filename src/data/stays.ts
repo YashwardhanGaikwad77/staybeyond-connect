@@ -214,7 +214,7 @@ const stays: Stay[] = [
     price: 32000,
     currency: "INR",
     images: [
-      "https://images.unsplash.com/photo-1605538032404-d5e869096a7b?auto=format&fit=crop&w=800",
+      "https://bluejellycruises.com/wp-content/uploads/2024/04/gall-2-1.webp",
       "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=800",
       "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=800"
     ],
@@ -253,7 +253,7 @@ const stays: Stay[] = [
     price: 38000,
     currency: "INR",
     images: [
-      "https://images.unsplash.com/photo-1561273575-42d3c5b3d4df?auto=format&fit=crop&w=800",
+      "https://images.travelandleisureasia.com/wp-content/uploads/sites/2/2021/03/05121931/5r4t-29.jpg?tr=w-1200,q-60",
       "https://images.unsplash.com/photo-1669024024763-e30138267b6e?auto=format&fit=crop&w=800",
       "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=800"
     ],
@@ -292,7 +292,7 @@ const stays: Stay[] = [
     price: 29000,
     currency: "INR",
     images: [
-      "https://images.unsplash.com/photo-1598082897099-fd39f6e2a5a2?auto=format&fit=crop&w=800",
+      "https://media.assettype.com/homegrown/import/book/13238-ufvjlmgxcl-1623755529.jpg?w=1200&h=675&auto=format%2Ccompress&fit=max&enlarge=true",
       "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800",
       "https://images.unsplash.com/photo-1614267861476-0d129972190b?auto=format&fit=crop&w=800"
     ],
@@ -449,7 +449,7 @@ const stays: Stay[] = [
     price: 48000,
     currency: "INR",
     images: [
-      "https://images.unsplash.com/photo-1602343168117-bb8a12d7ee1b?auto=format&fit=crop&w=800",
+      "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/16/01/46/28/niraamaya-retreats-backwaters.jpg?w=900&h=-1&s=1",
       "https://images.unsplash.com/photo-1618498897507-280375164a21?auto=format&fit=crop&w=800",
       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800"
     ],
@@ -567,8 +567,8 @@ const stays: Stay[] = [
     price: 30000,
     currency: "INR",
     images: [
-      "https://images.unsplash.com/photo-1587297699056-0df75f28ae06?auto=format&fit=crop&w=800",
-      "https://images.unsplash.com/photo-1493306337546-2eea4b83a8f7?auto=format&fit=crop&w=800",
+      "https://r2imghtlak.mmtcdn.com/r2-mmt-htl-image/flyfish/raw/NH71114307702736/QS1042/QS1042-Q1/1707753514003.jpeg",
+      "https://rawaiexperiences.com/wp-content/uploads/2023/04/Luxury-tent-inside-view.jpg",
       "https://images.unsplash.com/photo-1498813095029-de93be87adc6?auto=format&fit=crop&w=800"
     ],
     maxGuests: 2,
@@ -684,7 +684,7 @@ const stays: Stay[] = [
     price: 65000,
     currency: "INR",
     images: [
-      "https://images.unsplash.com/photo-1581793746485-04698e73b775?auto=format&fit=crop&w=800",
+      "https://images.travelandleisureasia.com/wp-content/uploads/sites/2/2023/10/17182916/1-1-13-1024x576.jpg",
       "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=800",
       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800"
     ],
