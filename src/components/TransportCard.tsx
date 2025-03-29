@@ -9,12 +9,33 @@ interface TransportCardProps {
   variant?: "default" | "featured";
 }
 
+// Fallback image in case the transport images fail to load
+const fallbackImage = "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=1920";
+
 const TransportCard = ({ transport, variant = "default" }: TransportCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
 
   const handleImageLoad = () => {
     setImageLoaded(true);
+  };
+
+  const handleImageError = () => {
+    console.error(`Failed to load image: ${transport.image}`);
+    setImageFailed(true);
+    
+    // Load the fallback image
+    const fallbackImg = new Image();
+    fallbackImg.src = fallbackImage;
+    fallbackImg.onload = () => {
+      setImageLoaded(true);
+    };
+  };
+
+  // Get the image source based on load status
+  const getImageSource = () => {
+    return imageFailed ? fallbackImage : transport.image;
   };
 
   const getTypeIcon = (type: string) => {
@@ -75,12 +96,13 @@ const TransportCard = ({ transport, variant = "default" }: TransportCardProps) =
             </div>
           )}
           <img
-            src={transport.image}
+            src={getImageSource()}
             alt={transport.name}
             className={`h-full w-full object-cover transition-transform duration-700 ease-in-out ${
               isHovered ? "scale-110" : "scale-100"
             } ${imageLoaded ? "opacity-100" : "opacity-0"}`}
             onLoad={handleImageLoad}
+            onError={handleImageError}
           />
         </div>
         
@@ -134,12 +156,13 @@ const TransportCard = ({ transport, variant = "default" }: TransportCardProps) =
           </div>
         )}
         <img
-          src={transport.image}
+          src={getImageSource()}
           alt={transport.name}
           className={`h-full w-full object-cover transition-transform duration-700 ease-in-out ${
             isHovered ? "scale-110" : "scale-100"
           } ${imageLoaded ? "opacity-100" : "opacity-0"}`}
           onLoad={handleImageLoad}
+          onError={handleImageError}
         />
         <div className="absolute top-3 right-3 flex items-center space-x-1 rounded-full bg-white/90 px-2 py-1 backdrop-blur-sm">
           <span className="text-xs font-medium flex items-center">
