@@ -9,19 +9,26 @@ const heroImages = [
   "https://images.unsplash.com/photo-1601699861307-b37d35fc925c?auto=format&fit=crop&w=1920"
 ];
 
+// Fallback image in case the unsplash images fail to load
+const fallbackImage = "https://images.pexels.com/photos/3214958/pexels-photo-3214958.jpeg?auto=compress&cs=tinysrgb&w=1920";
+
 const Hero = () => {
   const [currentImage, setCurrentImage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState<boolean[]>(
     Array(heroImages.length).fill(false)
   );
+  const [imageFailed, setImageFailed] = useState<boolean[]>(
+    Array(heroImages.length).fill(false)
+  );
 
   useEffect(() => {
     // Preload all images
-    heroImages.forEach((src, index) => {
+    const imageObjects = heroImages.map((src, index) => {
       const img = new Image();
       img.src = src;
       img.onload = () => {
+        console.log(`Image loaded: ${src}`);
         setImagesLoaded(prev => {
           const newState = [...prev];
           newState[index] = true;
@@ -31,15 +38,59 @@ const Hero = () => {
           return newState;
         });
       };
+      img.onerror = () => {
+        console.error(`Failed to load image: ${src}`);
+        setImageFailed(prev => {
+          const newState = [...prev];
+          newState[index] = true;
+          return newState;
+        });
+        
+        // Try the fallback image if main image fails
+        const fallbackImg = new Image();
+        fallbackImg.src = fallbackImage;
+        fallbackImg.onload = () => {
+          setImagesLoaded(prev => {
+            const newState = [...prev];
+            newState[index] = true;
+            if (newState.every(Boolean)) {
+              setIsLoading(false);
+            }
+            return newState;
+          });
+        };
+      };
+      return img;
     });
+
+    // Check if any images load within 5 seconds, otherwise show content anyway
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        console.log("Image loading timeout - showing content anyway");
+        setIsLoading(false);
+      }
+    }, 5000);
 
     // Set up image rotation
     const interval = setInterval(() => {
       setCurrentImage(prev => (prev + 1) % heroImages.length);
     }, 6000);
 
-    return () => clearInterval(interval);
-  }, []);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+      // Cleanup image objects
+      imageObjects.forEach(img => {
+        img.onload = null;
+        img.onerror = null;
+      });
+    };
+  }, [isLoading]);
+
+  // Get the image source based on load status
+  const getImageSource = (index: number) => {
+    return imageFailed[index] ? fallbackImage : heroImages[index];
+  };
 
   return (
     <div className="relative h-screen w-full overflow-hidden">
@@ -51,14 +102,14 @@ const Hero = () => {
       )}
 
       {/* Background images */}
-      {heroImages.map((img, index) => (
+      {heroImages.map((_, index) => (
         <div
           key={index}
           className={`absolute inset-0 transition-opacity duration-1000 ${
             currentImage === index ? "opacity-100" : "opacity-0"
           }`}
           style={{
-            backgroundImage: `url(${img})`,
+            backgroundImage: `url(${getImageSource(index)})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
