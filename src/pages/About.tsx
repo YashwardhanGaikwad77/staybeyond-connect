@@ -165,7 +165,7 @@ const About = () => {
                 name: "Siddhant Sakharkar",
                 //title: "Head of Curation",
                 //bio: "Priya personally visits and vets every property in our collection, bringing her background in interior design and hospitality management.",
-                image: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                image: "https://media.licdn.com/dms/image/v2/D4D03AQG0HXNL8tPrng/profile-displayphoto-shrink_400_400/B4DZXco8vNGkAg-/0/1743163478298?e=1749081600&v=beta&t=22uSJjXynIcB-0_pYxsIl9NVu-BVWsQk62nvU3jQL5k"
               },
               {
                 name: "Enayat Khan",
