@@ -84,7 +84,7 @@ const Recommendations = () => {
   
   useEffect(() => {
     fetchRecommendations();
-  }, [selectedCategory]); // Added selectedCategory as dependency
+  }, [selectedCategory]);
   
   const fetchRecommendations = async () => {
     try {
@@ -93,42 +93,64 @@ const Recommendations = () => {
       
       console.log("Fetching recommendations...");
       
+      // Fetch recommendations first
       const query = supabase
         .from("recommendations")
-        .select(`
-          *,
-          profiles:user_id (
-            first_name,
-            last_name
-          )
-        `)
+        .select("*")
         .order("created_at", { ascending: false });
       
       if (selectedCategory) {
         query.eq("category", selectedCategory);
       }
       
-      const { data, error } = await query;
+      const { data: recommendationsData, error: recommendationsError } = await query;
       
-      if (error) {
-        console.error("Supabase error:", error);
-        throw error;
+      if (recommendationsError) {
+        console.error("Supabase error:", recommendationsError);
+        throw recommendationsError;
       }
       
-      console.log("Fetched data:", data);
-      
-      if (!data) {
+      if (!recommendationsData || recommendationsData.length === 0) {
         setRecommendations([]);
+        setLoading(false);
         return;
       }
+
+      // Extract all user_ids to fetch profiles
+      const userIds = recommendationsData
+        .filter(rec => rec.user_id !== null)
+        .map(rec => rec.user_id);
       
-      const recommendationsWithUserNames = data.map(rec => ({
+      // Fetch user profiles if we have any user_ids
+      let userProfiles: Record<string, { first_name?: string, last_name?: string }> = {};
+      
+      if (userIds.length > 0) {
+        const { data: profilesData, error: profilesError } = await supabase
+          .from("profiles")
+          .select("id, first_name, last_name")
+          .in("id", userIds);
+        
+        if (!profilesError && profilesData) {
+          // Create a mapping of user_id to profile data
+          userProfiles = profilesData.reduce((acc, profile) => {
+            acc[profile.id] = {
+              first_name: profile.first_name,
+              last_name: profile.last_name
+            };
+            return acc;
+          }, {} as Record<string, { first_name?: string, last_name?: string }>);
+        }
+      }
+      
+      // Combine recommendation data with user profile data
+      const recommendationsWithUserNames = recommendationsData.map(rec => ({
         ...rec,
-        user_first_name: rec.profiles?.first_name,
-        user_last_name: rec.profiles?.last_name,
+        user_first_name: rec.user_id ? userProfiles[rec.user_id]?.first_name : undefined,
+        user_last_name: rec.user_id ? userProfiles[rec.user_id]?.last_name : undefined,
         likes: rec.likes || 0 // Ensure likes is never null
       }));
       
+      console.log("Fetched data:", recommendationsWithUserNames);
       setRecommendations(recommendationsWithUserNames);
     } catch (error: any) {
       console.error("Error fetching recommendations:", error);
