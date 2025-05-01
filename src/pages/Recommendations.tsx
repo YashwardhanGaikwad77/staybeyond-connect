@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { MapPin, ThumbsUp, Clock, User } from "lucide-react";
 import { format } from "date-fns";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Recommendation = {
   id: string;
@@ -68,6 +69,7 @@ const Recommendations = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   
   const form = useForm<z.infer<typeof recommendationSchema>>({
     resolver: zodResolver(recommendationSchema),
@@ -82,11 +84,14 @@ const Recommendations = () => {
   
   useEffect(() => {
     fetchRecommendations();
-  }, []);
+  }, [selectedCategory]); // Added selectedCategory as dependency
   
   const fetchRecommendations = async () => {
     try {
       setLoading(true);
+      setFetchError(null);
+      
+      console.log("Fetching recommendations...");
       
       const query = supabase
         .from("recommendations")
@@ -105,22 +110,35 @@ const Recommendations = () => {
       
       const { data, error } = await query;
       
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
+      
+      console.log("Fetched data:", data);
+      
+      if (!data) {
+        setRecommendations([]);
+        return;
+      }
       
       const recommendationsWithUserNames = data.map(rec => ({
         ...rec,
         user_first_name: rec.profiles?.first_name,
-        user_last_name: rec.profiles?.last_name
+        user_last_name: rec.profiles?.last_name,
+        likes: rec.likes || 0 // Ensure likes is never null
       }));
       
       setRecommendations(recommendationsWithUserNames);
     } catch (error: any) {
       console.error("Error fetching recommendations:", error);
+      setFetchError(error.message || "Could not load recommendations");
       toast({
         title: "Error fetching recommendations",
         description: error.message || "Could not load recommendations",
         variant: "destructive",
       });
+      setRecommendations([]); // Set empty array in case of error
     } finally {
       setLoading(false);
     }
@@ -145,7 +163,8 @@ const Recommendations = () => {
           description: values.description,
           category: values.category,
           location: values.location,
-          image_url: values.image_url || null
+          image_url: values.image_url || null,
+          likes: 0 // Initialize likes to 0
         });
       
       if (error) throw error;
@@ -204,6 +223,11 @@ const Recommendations = () => {
       });
     }
   };
+
+  // Function to retry fetching recommendations
+  const handleRetryFetch = () => {
+    fetchRecommendations();
+  };
   
   return (
     <div className="min-h-screen pt-16 bg-stone-light">
@@ -225,7 +249,6 @@ const Recommendations = () => {
               className={selectedCategory === null ? "bg-gold hover:bg-gold-dark" : ""}
               onClick={() => {
                 setSelectedCategory(null);
-                fetchRecommendations();
               }}
             >
               All
@@ -237,7 +260,6 @@ const Recommendations = () => {
                 className={selectedCategory === category ? "bg-gold hover:bg-gold-dark" : ""}
                 onClick={() => {
                   setSelectedCategory(category);
-                  fetchRecommendations();
                 }}
               >
                 {category}
@@ -362,12 +384,47 @@ const Recommendations = () => {
         )}
         
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <div className="h-1 w-24 bg-gradient-to-r from-gold-dark to-gold rounded animate-pulse mx-auto"></div>
-              <p className="mt-4 text-muted-foreground">Loading recommendations...</p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((skeleton) => (
+              <Card key={skeleton} className="overflow-hidden">
+                <div className="h-48">
+                  <Skeleton className="h-full w-full" />
+                </div>
+                <CardHeader>
+                  <Skeleton className="h-4 w-24 mb-2" />
+                  <Skeleton className="h-6 w-full" />
+                  <Skeleton className="h-4 w-32" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-20 w-full" />
+                </CardContent>
+                <CardFooter className="flex justify-between border-t pt-4">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-24" />
+                </CardFooter>
+              </Card>
+            ))}
           </div>
+        ) : fetchError ? (
+          <Card className="text-center py-12">
+            <CardContent>
+              <div className="flex flex-col items-center">
+                <div className="rounded-full bg-stone-lightest p-4 mb-4">
+                  <MapPin className="w-8 h-8 text-destructive" />
+                </div>
+                <h3 className="text-lg font-medium mb-2">Failed to load recommendations</h3>
+                <p className="text-muted-foreground max-w-md mx-auto mb-6">
+                  {fetchError}
+                </p>
+                <Button 
+                  onClick={handleRetryFetch}
+                  className="bg-gold hover:bg-gold-dark"
+                >
+                  Try Again
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         ) : recommendations.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {recommendations.map((rec) => (
@@ -378,6 +435,10 @@ const Recommendations = () => {
                       src={rec.image_url} 
                       alt={rec.title} 
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        // Replace with a placeholder if image fails to load
+                        (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1601233211928-8b8e61f364cb?auto=format&fit=crop&w=800";
+                      }}
                     />
                   </div>
                 )}
