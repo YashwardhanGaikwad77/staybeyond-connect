@@ -159,7 +159,7 @@ const About = () => {
               },
               {
                 name: "Yashwardhan Gaikwad",
-                image: ""
+                image:"https://www.google.com/imgres?q=black%20profile&imgurl=https%3A%2F%2Fi.pinimg.com%2F736x%2Fc0%2F74%2F9b%2Fc0749b7cc401421662ae901ec8f9f660.jpg&imgrefurl=https%3A%2F%2Fwww.pinterest.com%2Fpin%2F792070653234421442%2F&docid=IXb5PH3FKQqNhM&tbnid=Hus9rsDo6r0IEM&vet=12ahUKEwj3_ebP_YONAxXSma8BHf2mCD0QM3oECBoQAA..i&w=736&h=736&hcb=2&ved=2ahUKEwj3_ebP_YONAxXSma8BHf2mCD0QM3oECBoQAA"
               }
             ].map((member, index) => (
               <div key={index} className="text-center">
