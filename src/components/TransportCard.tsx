@@ -1,7 +1,9 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { MapPin } from "lucide-react";
+import { MapPin, X } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import TransportBookingForm from "@/components/TransportBookingForm";
 import type { Transport } from "../data/transport";
 
 interface TransportCardProps {
@@ -16,6 +18,7 @@ const TransportCard = ({ transport, variant = "default" }: TransportCardProps) =
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
+  const [showBookingDialog, setShowBookingDialog] = useState(false);
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -83,13 +86,97 @@ const TransportCard = ({ transport, variant = "default" }: TransportCardProps) =
 
   if (variant === "featured") {
     return (
-      <Link 
-        to={`/transport`}
-        className="group relative overflow-hidden rounded-lg shadow-lg transition-all hover-lift block h-full"
+      <>
+        <div 
+          className="group relative overflow-hidden rounded-lg shadow-lg transition-all hover-lift block h-full cursor-pointer"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onClick={() => setShowBookingDialog(true)}
+        >
+          <div className="aspect-[16/9] w-full overflow-hidden">
+            {!imageLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center bg-stone p-4">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold border-t-transparent"></div>
+              </div>
+            )}
+            <img
+              src={getImageSource()}
+              alt={transport.name}
+              className={`h-full w-full object-cover transition-transform duration-700 ease-in-out ${
+                isHovered ? "scale-110" : "scale-100"
+              } ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+            />
+          </div>
+          
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6 text-white">
+            <div className="mb-2 flex items-center">
+              <span className="mr-1 rounded-full bg-gold px-2 py-0.5 text-xs font-medium flex items-center">
+                {getTypeIcon(transport.type)}
+                <span className="ml-1 capitalize">{transport.type}</span>
+              </span>
+              <span className="ml-2 rounded-full bg-gold/20 backdrop-blur-xs px-2 py-0.5 text-xs font-medium">
+                Featured
+              </span>
+            </div>
+            
+            <h3 className="mb-1 text-xl font-medium">{transport.name}</h3>
+            
+            {(transport.origin || transport.destination) && (
+              <div className="mb-3 flex items-center text-sm text-white/80">
+                <MapPin size={14} className="mr-1" />
+                <span>{transport.origin} {transport.destination && `→ ${transport.destination}`}</span>
+              </div>
+            )}
+            
+            <p className="mb-4 text-sm text-white/80 line-clamp-2">{transport.description}</p>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-lg font-medium">₹{transport.basePrice.toLocaleString()}</span>
+                <span className="text-sm text-white/70"> onwards</span>
+              </div>
+              <span className="rounded-full bg-white/20 px-3 py-1 text-xs backdrop-blur-sm transition-colors group-hover:bg-gold">
+                Book Now
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Booking dialog */}
+        <Dialog open={showBookingDialog} onOpenChange={setShowBookingDialog}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle className="flex items-start justify-between">
+                <div>
+                  <span className="capitalize text-sm text-gold">{transport.type} Transport</span>
+                  <h2 className="text-xl font-medium">{transport.name}</h2>
+                </div>
+              </DialogTitle>
+            </DialogHeader>
+            <div className="mt-2">
+              <TransportBookingForm 
+                transport={transport}
+                onSuccess={() => setShowBookingDialog(false)}
+                onCancel={() => setShowBookingDialog(false)}
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div 
+        className="group block overflow-hidden rounded-lg bg-white shadow-md hover-lift h-full transition-all cursor-pointer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onClick={() => setShowBookingDialog(true)}
       >
-        <div className="aspect-[16/9] w-full overflow-hidden">
+        <div className="relative aspect-[4/3] w-full overflow-hidden">
           {!imageLoaded && (
             <div className="absolute inset-0 flex items-center justify-center bg-stone p-4">
               <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold border-t-transparent"></div>
@@ -104,108 +191,70 @@ const TransportCard = ({ transport, variant = "default" }: TransportCardProps) =
             onLoad={handleImageLoad}
             onError={handleImageError}
           />
-        </div>
-        
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6 text-white">
-          <div className="mb-2 flex items-center">
-            <span className="mr-1 rounded-full bg-gold px-2 py-0.5 text-xs font-medium flex items-center">
+          <div className="absolute top-3 right-3 flex items-center space-x-1 rounded-full bg-white/90 px-2 py-1 backdrop-blur-sm">
+            <span className="text-xs font-medium flex items-center">
               {getTypeIcon(transport.type)}
               <span className="ml-1 capitalize">{transport.type}</span>
             </span>
-            <span className="ml-2 rounded-full bg-gold/20 backdrop-blur-xs px-2 py-0.5 text-xs font-medium">
-              Featured
-            </span>
           </div>
-          
-          <h3 className="mb-1 text-xl font-medium">{transport.name}</h3>
-          
+        </div>
+        
+        <div className="p-4">
           {(transport.origin || transport.destination) && (
-            <div className="mb-3 flex items-center text-sm text-white/80">
-              <MapPin size={14} className="mr-1" />
+            <div className="mb-1 flex items-center text-xs text-muted-foreground">
+              <MapPin size={12} className="mr-1" />
               <span>{transport.origin} {transport.destination && `→ ${transport.destination}`}</span>
             </div>
           )}
           
-          <p className="mb-4 text-sm text-white/80 line-clamp-2">{transport.description}</p>
+          <h3 className="mb-1 text-lg font-medium">{transport.name}</h3>
           
-          <div className="flex items-center justify-between">
+          <div className="mb-3 flex flex-wrap gap-1">
+            {transport.features.slice(0, 3).map((feature, i) => (
+              <span key={i} className="rounded-full bg-secondary px-2 py-0.5 text-xs">
+                {feature}
+              </span>
+            ))}
+            {transport.features.length > 3 && (
+              <span className="rounded-full bg-secondary px-2 py-0.5 text-xs">
+                +{transport.features.length - 3} more
+              </span>
+            )}
+          </div>
+          
+          <div className="flex items-center justify-between border-t border-border pt-3">
             <div>
-              <span className="text-lg font-medium">₹{transport.basePrice.toLocaleString()}</span>
-              <span className="text-sm text-white/70"> onwards</span>
+              <span className="font-medium">₹{transport.basePrice.toLocaleString()}</span>
+              <span className="text-xs text-muted-foreground"> onwards</span>
             </div>
-            <span className="rounded-full bg-white/20 px-3 py-1 text-xs backdrop-blur-sm transition-colors group-hover:bg-gold">
-              View Details
+            <span className="rounded-full bg-gold/10 px-3 py-1 text-xs font-medium text-gold transition-colors group-hover:bg-gold group-hover:text-white">
+              Book Now
             </span>
           </div>
         </div>
-      </Link>
-    );
-  }
+      </div>
 
-  return (
-    <Link 
-      to={`/transport`}
-      className="group block overflow-hidden rounded-lg bg-white shadow-md hover-lift h-full transition-all"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="relative aspect-[4/3] w-full overflow-hidden">
-        {!imageLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center bg-stone p-4">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold border-t-transparent"></div>
+      {/* Booking dialog */}
+      <Dialog open={showBookingDialog} onOpenChange={setShowBookingDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-start justify-between">
+              <div>
+                <span className="capitalize text-sm text-gold">{transport.type} Transport</span>
+                <h2 className="text-xl font-medium">{transport.name}</h2>
+              </div>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="mt-2">
+            <TransportBookingForm 
+              transport={transport}
+              onSuccess={() => setShowBookingDialog(false)}
+              onCancel={() => setShowBookingDialog(false)}
+            />
           </div>
-        )}
-        <img
-          src={getImageSource()}
-          alt={transport.name}
-          className={`h-full w-full object-cover transition-transform duration-700 ease-in-out ${
-            isHovered ? "scale-110" : "scale-100"
-          } ${imageLoaded ? "opacity-100" : "opacity-0"}`}
-          onLoad={handleImageLoad}
-          onError={handleImageError}
-        />
-        <div className="absolute top-3 right-3 flex items-center space-x-1 rounded-full bg-white/90 px-2 py-1 backdrop-blur-sm">
-          <span className="text-xs font-medium flex items-center">
-            {getTypeIcon(transport.type)}
-            <span className="ml-1 capitalize">{transport.type}</span>
-          </span>
-        </div>
-      </div>
-      
-      <div className="p-4">
-        {(transport.origin || transport.destination) && (
-          <div className="mb-1 flex items-center text-xs text-muted-foreground">
-            <MapPin size={12} className="mr-1" />
-            <span>{transport.origin} {transport.destination && `→ ${transport.destination}`}</span>
-          </div>
-        )}
-        
-        <h3 className="mb-1 text-lg font-medium">{transport.name}</h3>
-        
-        <div className="mb-3 flex flex-wrap gap-1">
-          {transport.features.slice(0, 3).map((feature, i) => (
-            <span key={i} className="rounded-full bg-secondary px-2 py-0.5 text-xs">
-              {feature}
-            </span>
-          ))}
-          {transport.features.length > 3 && (
-            <span className="rounded-full bg-secondary px-2 py-0.5 text-xs">
-              +{transport.features.length - 3} more
-            </span>
-          )}
-        </div>
-        
-        <div className="flex items-center justify-between border-t border-border pt-3">
-          <div>
-            <span className="font-medium">₹{transport.basePrice.toLocaleString()}</span>
-            <span className="text-xs text-muted-foreground"> onwards</span>
-          </div>
-          <span className="rounded-full bg-gold/10 px-3 py-1 text-xs font-medium text-gold transition-colors group-hover:bg-gold group-hover:text-white">
-            View Details
-          </span>
-        </div>
-      </div>
-    </Link>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

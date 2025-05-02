@@ -17,6 +17,7 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Bookings from "./pages/Bookings";
+import TransportBookings from "./pages/TransportBookings";
 import BecomeHost from "./pages/BecomeHost";
 import MyListings from "./pages/MyListings";
 import Recommendations from "./pages/Recommendations";
@@ -74,6 +75,7 @@ const AppRoutes = () => {
           <Route path="/auth" element={user ? <Navigate to="/" replace /> : <Auth />} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/bookings" element={<ProtectedRoute><Bookings /></ProtectedRoute>} />
+          <Route path="/transport-bookings" element={<ProtectedRoute><TransportBookings /></ProtectedRoute>} />
           <Route path="/become-host" element={<ProtectedRoute><BecomeHost /></ProtectedRoute>} />
           <Route path="/my-listings" element={<ProtectedRoute><MyListings /></ProtectedRoute>} />
           <Route path="/recommendations" element={<Recommendations />} />

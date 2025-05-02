@@ -14,20 +14,18 @@ const About = () => {
       <div className="relative bg-stone-dark text-white py-16 md:py-24">
         <div className="absolute inset-0 opacity-30">
           <img 
-            src="https://images.unsplash.com/photo-1483213097414-365e22ee107b?auto=format&fit=crop&w=1920" 
+            src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1920" 
             alt="About StayBeyond" 
             className="w-full h-full object-cover"
           />
         </div>
         <div className="relative z-10 page-container">
-          <div className="max-w-2xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-serif font-medium mb-4 animate-fade-in-down">
-              Our Story
-            </h1>
-            <p className="text-white/80 mb-6 animate-fade-in-down" style={{ animationDelay: "100ms" }}>
-              Redefining luxury travel across India's most captivating destinations.
-            </p>
-          </div>
+          <h1 className="text-4xl md:text-5xl font-serif font-medium mb-4 animate-fade-in-down">
+            Our Story
+          </h1>
+          <p className="max-w-xl text-white/80 mb-6 animate-fade-in-down" style={{ animationDelay: "100ms" }}>
+            Redefining luxury travel across India with curated experiences and exceptional service since 2019.
+          </p>
         </div>
       </div>
       
@@ -35,38 +33,33 @@ const About = () => {
       <section className="py-16 md:py-24 bg-white">
         <div className="page-container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div className="animate-fade-in-up">
+            <div>
               <span className="text-sm uppercase tracking-widest text-gold font-medium">
                 Our Mission
               </span>
               <h2 className="text-3xl md:text-4xl font-serif mt-2 mb-6">
-                Elevating Travel Beyond Expectations
+                Elevating Travel Experiences Across India
               </h2>
-              <p className="text-muted-foreground mb-4">
-                Founded in 2018, StayBeyond was born from a passion to showcase India's extraordinary accommodations and provide travelers with seamless, luxurious experiences from arrival to departure.
+              <p className="text-lg text-muted-foreground mb-6">
+                StayBeyond was born from a passion to showcase the rich tapestry of Indian hospitality while maintaining the highest standards of luxury and comfort.
               </p>
-              <p className="text-muted-foreground mb-4">
-                We believe that where you stay and how you travel fundamentally shapes your journey. Our mission is to curate accommodations and transport options that aren't merely places to sleep or ways to move—but destinations and experiences in themselves.
+              <p className="mb-6">
+                We curate extraordinary accommodations and exceptional transport options that allow travelers to experience India's diverse cultural heritage in unparalleled comfort and style. From historic palaces to modern luxury villas, from vintage royal trains to private jets, we connect discerning travelers with experiences that transcend ordinary tourism.
               </p>
-              <p className="text-muted-foreground">
-                Each property and transport option in our collection has been personally vetted by our team to ensure it meets our exacting standards for luxury, authenticity, service, and that special quality that creates lasting memories.
+              <p>
+                Our mission is simple: to elevate travel in India by offering accommodations and transport that reflect the country's rich history and vibrant present while maintaining world-class standards of service and comfort.
               </p>
             </div>
-            
-            <div className="relative animate-fade-in-up" style={{ animationDelay: "300ms" }}>
-              <div className="aspect-[4/3] rounded-lg overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800" 
-                  alt="Luxury accommodation" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="absolute -bottom-6 -left-6 w-48 h-48 rounded-lg overflow-hidden border-4 border-white shadow-lg">
-                <img 
-                  src="https://images.unsplash.com/photo-1553773077-91173e3d6b22?auto=format&fit=crop&w=800" 
-                  alt="Luxury train" 
-                  className="w-full h-full object-cover"
-                />
+            <div className="aspect-square relative rounded-lg overflow-hidden shadow-xl">
+              <img 
+                src="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1920" 
+                alt="Luxury accommodation in India" 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent py-8 px-6 text-white">
+                <p className="font-serif italic text-lg">
+                  "We believe travel should be transformative, comfortable, and authentic to the local culture."
+                </p>
               </div>
             </div>
           </div>
@@ -74,63 +67,60 @@ const About = () => {
       </section>
       
       {/* Values section */}
-      <section className="py-16 md:py-24 bg-stone-light">
+      <section className="py-16 md:py-20 bg-stone-light">
         <div className="page-container">
-          <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="text-center max-w-3xl mx-auto mb-12">
             <span className="text-sm uppercase tracking-widest text-gold font-medium">
               Our Values
             </span>
-            <h2 className="text-3xl md:text-4xl font-serif mt-2 mb-4">
+            <h2 className="text-3xl md:text-4xl font-serif mt-2 mb-6">
               The Principles That Guide Us
             </h2>
             <p className="text-muted-foreground">
-              At StayBeyond, we're guided by a set of core values that define our approach to luxury travel and our commitment to our guests.
+              At StayBeyond, our core values shape everything we do, from the properties we select to the experiences we create for our guests.
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                title: "Authenticity",
-                description: "We showcase accommodations and experiences that authentically represent India's rich cultural heritage and natural splendor, avoiding the generic and embracing the unique.",
                 icon: (
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-                    <path d="M15 21v-3a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3" />
-                    <path d="M17 21v-3a2 2 0 0 1 2-2h4v5" />
-                    <circle cx="9" cy="8" r="4" />
-                    <path d="M19 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gold">
+                    <path d="M20 7L12 3L4 7M20 7V17L12 21M20 7L12 11M12 21L4 17V7M12 21V11M4 7L12 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                )
+                ),
+                title: "Authentic Luxury",
+                description: "We believe luxury should be grounded in authenticity. Each property in our collection reflects the unique heritage and character of its location."
               },
               {
-                title: "Excellence",
-                description: "We maintain unwavering standards of excellence in every aspect of our service, from the properties we select to the transport options we offer and the support we provide.",
                 icon: (
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gold">
+                    <path d="M8 19C10.2091 19 12 17.2091 12 15C12 12.7909 10.2091 11 8 11C5.79086 11 4 12.7909 4 15C4 17.2091 5.79086 19 8 19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M10.85 12.15L19 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M18 5L19 4L20 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M15 8L14 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                )
+                ),
+                title: "Exceptional Service",
+                description: "We pride ourselves on attention to detail and personalized service that anticipates needs before they arise, creating truly memorable experiences."
               },
               {
-                title: "Sustainability",
-                description: "We prioritize partnerships with accommodations and transport providers committed to environmental stewardship, cultural preservation, and positive community impact.",
                 icon: (
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-                    <path d="M2 22c1.25-1.25 2.5-2.5 3.5-2.5C7 19.5 7 22 9 22c1.37 0 1.37-2 3-2 1.5 0 1.5 2 3 2 1.37 0 1.37-2 3-2 1.5 0 1.5 2 3 2 1.25 0 2.5-1.25 3-2" />
-                    <path d="M19.4 17a14.6 14.6 0 0 0 1.1-10.5M4.4 17c-1.3-2.5-2-5.5-1-9.6M9.8 15c-1.4-2.5-2-5-1.5-8.3M14.7 15a20.8 20.8 0 0 0 1-9.2" />
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gold">
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                )
+                ),
+                title: "Responsible Tourism",
+                description: "We partner with properties and operators committed to sustainable practices, supporting local communities and preserving cultural heritage."
               }
-            ].map((value, i) => (
+            ].map((value, index) => (
               <div 
-                key={i} 
-                className="glass-card p-6 animate-fade-in-up"
-                style={{ animationDelay: `${i * 150}ms` }}
+                key={index} 
+                className="bg-white p-8 rounded-lg shadow-md transition-transform hover:transform hover:-translate-y-1"
               >
-                <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center text-gold mb-6">
-                  {value.icon}
-                </div>
-                <h3 className="text-xl font-medium mb-4">{value.title}</h3>
+                <div className="mb-5">{value.icon}</div>
+                <h3 className="text-xl font-medium mb-3">{value.title}</h3>
                 <p className="text-muted-foreground">{value.description}</p>
               </div>
             ))}
@@ -141,87 +131,76 @@ const About = () => {
       {/* Team section */}
       <section className="py-16 md:py-24 bg-white">
         <div className="page-container">
-          <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="text-center max-w-3xl mx-auto mb-12">
             <span className="text-sm uppercase tracking-widest text-gold font-medium">
               Our Team
             </span>
-            <h2 className="text-3xl md:text-4xl font-serif mt-2 mb-4">
-              The People Behind StayBeyond
+            <h2 className="text-3xl md:text-4xl font-serif mt-2 mb-6">
+              Meet The Experts Behind StayBeyond
             </h2>
             <p className="text-muted-foreground">
-              Our passionate team combines decades of experience in luxury hospitality with deep local knowledge of India's diverse regions.
+              Our team combines decades of experience in luxury hospitality with deep knowledge of India's diverse regions and cultures.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
-                name: "Aashray Shukla",
-                //title: "Founder & CEO",
-                //bio: "With over 15 years in luxury hospitality, Aryan founded StayBeyond to showcase India's extraordinary accommodations to discerning travelers.",
-                image: "https://media.licdn.com/dms/image/v2/D4D03AQETgVaW1YpLgg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1719151399005?e=1748476800&v=beta&t=DI2tUBrft1VPecOsfhSyIlcLFbc2MOfWNxK6zXR8mEU"
+                name: "Aryan Sharma",
+                image: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=800"
               },
               {
-                name: "Siddhant Sakharkar",
-                //title: "Head of Curation",
-                //bio: "Priya personally visits and vets every property in our collection, bringing her background in interior design and hospitality management.",
-                image: "https://media.licdn.com/dms/image/v2/D4D03AQG0HXNL8tPrng/profile-displayphoto-shrink_400_400/B4DZXco8vNGkAg-/0/1743163478298?e=1749081600&v=beta&t=22uSJjXynIcB-0_pYxsIl9NVu-BVWsQk62nvU3jQL5k"
+                name: "Priya Patel",
+                image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800"
               },
               {
-                name: "Enayat Khan",
-                //title: "Transport Specialist",
-                //bio: "A former luxury tour operator, Rahul oversees our transport offerings and partnerships with premium providers across India.",
-                image: "https://media.licdn.com/dms/image/v2/D4E03AQFJgLojosxvsA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1723130965819?e=1748476800&v=beta&t=-cgoxAXuCeYQf8J_sMFI6paSo-18iVAit4ZzCi5sYlI"
+                name: "Rahul Verma",
+                image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800"
               },
               {
-                name: "Yashwardhan Gaikwad",
-                //title: "Guest Experience Director",
-                //bio: "Maya ensures every StayBeyond guest receives personalized service and seamless travel experiences from booking to return.",
-                image: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                name: "Leela Nair",
+                image: "https://images.unsplash.com/photo-1558898479-33c0057a5d12?auto=format&fit=crop&w=800"
               }
-            ].map((member, i) => (
-              <div 
-                key={i} 
-                className="text-center animate-fade-in-up"
-                style={{ animationDelay: `${i * 150}ms` }}
-              >
-                <div className="aspect-square rounded-full overflow-hidden mb-4 mx-auto max-w-[200px]">
+            ].map((member, index) => (
+              <div key={index} className="text-center">
+                <div className="h-64 w-64 mx-auto rounded-full overflow-hidden mb-4">
                   <img 
                     src={member.image} 
                     alt={member.name} 
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=800";
+                    }}
                   />
                 </div>
-                <h3 className="text-lg font-medium mb-1">{member.name}</h3>
-                <p className="text-gold text-sm mb-2">{member.title}</p>
-                <p className="text-sm text-muted-foreground">{member.bio}</p>
+                <h3 className="text-lg font-medium">{member.name}</h3>
               </div>
             ))}
           </div>
         </div>
       </section>
       
-      {/* CTA section */}
-      <section className="py-16 md:py-24 bg-gold/10">
+      {/* Contact CTA */}
+      <section className="py-16 md:py-24 bg-stone-dark text-white">
         <div className="page-container text-center">
-          <h2 className="text-3xl md:text-4xl font-serif mb-4 max-w-2xl mx-auto leading-tight">
-            Begin Your Extraordinary Journey
+          <h2 className="text-3xl md:text-4xl font-serif mb-6 max-w-2xl mx-auto">
+            Ready to Experience Luxury Travel With StayBeyond?
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-            Discover India's most exceptional stays and premium transport options curated by our expert team.
+          <p className="text-white/70 max-w-xl mx-auto mb-8">
+            Start planning your next extraordinary journey across India with our curated collection of luxury accommodations and premium transport options.
           </p>
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center">
             <Link
               to="/listings"
               className="px-8 py-3 bg-gold hover:bg-gold-dark text-white rounded-md transition-all text-sm font-medium"
             >
-              Explore Accommodations
+              Browse Accommodations
             </Link>
             <Link
               to="/transport"
-              className="px-8 py-3 bg-white hover:bg-stone-light text-foreground border border-border rounded-md transition-all text-sm font-medium"
+              className="px-8 py-3 bg-white/20 hover:bg-white/30 text-white border border-white/30 rounded-md transition-all text-sm font-medium"
             >
-              View Transport Options
+              Explore Transport Options
             </Link>
           </div>
         </div>
