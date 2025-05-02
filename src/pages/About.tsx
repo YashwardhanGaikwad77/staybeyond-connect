@@ -147,15 +147,15 @@ const About = () => {
             {[
               {
                 name: "Aashray Shukla",
-                image: ""
+                image: "https://media.licdn.com/dms/image/v2/D4D03AQETgVaW1YpLgg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1719151399005?e=1751500800&v=beta&t=ptSz2FHbp85D19PIDV21mj-1GF2EqRqMkB3o953pLus"
               },
               {
                 name: "Siddhant Sakharkar",
-                image: ""
+                image: "https://media.licdn.com/dms/image/v2/D4D03AQG0HXNL8tPrng/profile-displayphoto-shrink_400_400/B4DZXco8vNGkAg-/0/1743163478298?e=1751500800&v=beta&t=FaTWKSMGCOca9i3TSqfrtx9JximsUDDE-r4BSHeDA1w"
               },
               {
                 name: "Enayat Khan",
-                image: ""
+                image: "https://media.licdn.com/dms/image/v2/D4E03AQFJgLojosxvsA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1723130965819?e=1751500800&v=beta&t=wkwe6c_SWnozFwxrESwHMA5y210fAG2EUlsY3nGa6JU"
               },
               {
                 name: "Yashwardhan Gaikwad",
