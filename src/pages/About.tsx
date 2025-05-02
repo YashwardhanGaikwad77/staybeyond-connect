@@ -146,20 +146,20 @@ const About = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
-                name: "Aryan Sharma",
-                image: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=800"
+                name: "Aashray Shukla",
+                image: ""
               },
               {
-                name: "Priya Patel",
-                image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800"
+                name: "Siddhant Sakharkar",
+                image: ""
               },
               {
-                name: "Rahul Verma",
-                image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800"
+                name: "Enayat Khan",
+                image: ""
               },
               {
-                name: "Leela Nair",
-                image: "https://images.unsplash.com/photo-1558898479-33c0057a5d12?auto=format&fit=crop&w=800"
+                name: "Yashwardhan Gaikwad",
+                image: ""
               }
             ].map((member, index) => (
               <div key={index} className="text-center">
